@@ -20,7 +20,7 @@ echo "Installing gum for a better experience"
 yay -S --needed --noconfirm gum
 
 if gum confirm "Install a bunch of essential packages? (required)"; then
-    yay -S --needed --noconfirm bluez bluez-utils brightnessctl htop man-db nano niri noto-fonts noto-fonts-cjk noto-fonts-emoji pipewire-audio pipewire-pulse playerctl ttf-dejavu ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono xwayland-satellite wget adw-gtk-theme nautilus
+    yay -S --needed --noconfirm bluez bluez-utils brightnessctl htop man-db nano niri noto-fonts noto-fonts-cjk noto-fonts-emoji pipewire-audio pipewire-pulse playerctl ttf-dejavu ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono xwayland-satellite wget adw-gtk-theme nautilus vim vi
     gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark' && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     cp -r ~/configurator/.config/niri ~/.config
 else
@@ -46,7 +46,7 @@ fi
 
 if gum confirm "Install system settings apps? (highly recommended)"; then
     yay -S --needed --noconfirm blackbox-terminal bm-sidebar junction mission-center nirimod-git pwvucontrol walker-bin elephant-desktopapplications elephant-providerlist adw-network
-    cargo install --path $SCRIPT_DIR/.config/dashboard-gtk
+    cargo install --path $SCRIPT_DIR/dashboard-gtk
 fi
 
 if gum confirm "Setup zsh and oh-my-zsh?"; then

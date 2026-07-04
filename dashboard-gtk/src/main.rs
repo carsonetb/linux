@@ -20,13 +20,19 @@ fn build(app: &adw::Application) {
 
     let clock = gtk::Label::builder()
         .css_classes(["clock"])
-        .label(chrono::Local::now().format("%H:%M:%S %B %d %Y").to_string())
-        .margin_top(12)
+        .label(
+            chrono::Local::now()
+                .format("%I:%M:%S %P, %B %d %Y")
+                .to_string(),
+        )
+        .margin_top(14)
         .build();
 
     let cloned = clock.clone();
     glib::timeout_add_seconds_local(1, move || {
-        let time_string = chrono::Local::now().format("%H:%M:%S %B %d %Y").to_string();
+        let time_string = chrono::Local::now()
+            .format("%I:%M:%S %P, %B %d %Y")
+            .to_string();
         cloned.set_label(&time_string);
         glib::ControlFlow::Continue
     });
@@ -66,11 +72,55 @@ fn build(app: &adw::Application) {
     battery_overlay.set_child(Some(&battery));
     battery_overlay.add_overlay(&battery_label);
 
+    let mut system = sysinfo::System::new_all();
+    system.refresh_all();
+    let percentage = system.used_memory() as f64 / system.total_memory() as f64 * 100.0;
+    let memory_label = gtk::Label::builder()
+        .label(format!("Memory {percentage:.0}%"))
+        .halign(gtk::Align::Center)
+        .valign(gtk::Align::Center)
+        .build();
+    let memory = gtk::ProgressBar::builder()
+        .css_classes(["memory-bar"])
+        .orientation(gtk::Orientation::Horizontal)
+        .fraction(percentage / 100.0)
+        .margin_start(12)
+        .margin_end(12)
+        .hexpand(true)
+        .build();
+
+    let memory_overlay = gtk::Overlay::new();
+    memory_overlay.set_child(Some(&memory));
+    memory_overlay.add_overlay(&memory_label);
+
+    let disks = sysinfo::Disks::new_with_refreshed_list();
+    let disk = disks.list().first().unwrap();
+    let percentage =
+        ((disk.total_space() - disk.available_space()) as f64 / disk.total_space() as f64) * 100.0;
+    let storage_label = gtk::Label::builder()
+        .label(format!("Storage {percentage:.0}%"))
+        .halign(gtk::Align::Center)
+        .valign(gtk::Align::Center)
+        .build();
+    let storage = gtk::ProgressBar::builder()
+        .css_classes(["storage-bar"])
+        .orientation(gtk::Orientation::Horizontal)
+        .fraction(percentage / 100.0)
+        .margin_top(12)
+        .margin_bottom(12)
+        .margin_start(12)
+        .margin_end(12)
+        .hexpand(true)
+        .build();
+
+    let storage_overlay = gtk::Overlay::new();
+    storage_overlay.set_child(Some(&storage));
+    storage_overlay.add_overlay(&storage_label);
+
     let buttons = gtk::Box::builder()
-        .css_classes(["buttons"])
         .orientation(gtk::Orientation::Horizontal)
         .homogeneous(true)
-        .margin_top(12)
+        .margin_bottom(12)
         .margin_start(12)
         .margin_end(12)
         .build();
@@ -81,6 +131,12 @@ fn build(app: &adw::Application) {
     let network = gtk::Button::builder().label("").margin_end(12).build();
     let bluetooth = gtk::Button::builder().label("󰂯").margin_end(12).build();
     let volume = gtk::Button::builder().label("").build();
+    power.set_can_focus(false);
+    suspend.set_can_focus(false);
+    restart.set_can_focus(false);
+    network.set_can_focus(false);
+    bluetooth.set_can_focus(false);
+    volume.set_can_focus(false);
 
     buttons.append(&power);
     buttons.append(&suspend);
@@ -91,6 +147,8 @@ fn build(app: &adw::Application) {
 
     content.append(&clock);
     content.append(&battery_overlay);
+    content.append(&memory_overlay);
+    content.append(&storage_overlay);
     content.append(&buttons);
 
     let provider = gtk::CssProvider::new();
