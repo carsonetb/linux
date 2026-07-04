@@ -1,0 +1,25 @@
+.battery-bar trough {
+    background-color: #18181b;
+    border-radius: 15px;
+    min-width: 300px;
+    min-height: 30px;
+}
+
+.battery-bar progress {
+    background-color: #a6e3a1;
+    border-radius: 15px;
+    min-height: 30px;
+}
+
+.clock {
+    font-size: xx-large;
+}
+
+button {
+    font-family: "Symbols Nerd Font Mono";
+    font-size: 16px;
+}
+
+.buttons {
+    margin-bottom: -73px;
+}
