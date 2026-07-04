@@ -250,6 +250,7 @@ layout {
 spawn-at-startup "walker" "--gapplication-service"
 spawn-at-startup "swaync"
 spawn-at-startup "hypridle"
+spawn-at-startup "elephant"
 spawn-at-startup "~/.config/battery-alert.sh"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
