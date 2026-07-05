@@ -20,7 +20,8 @@ echo "Installing gum for a better experience"
 yay -S --needed --noconfirm gum
 
 if gum confirm "Install a bunch of essential packages? (required)"; then
-    yay -S --needed --noconfirm bluez bluez-utils brightnessctl htop man-db nano niri noto-fonts noto-fonts-cjk noto-fonts-emoji pipewire-audio pipewire-pulse playerctl ttf-dejavu ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono xwayland-satellite wget adw-gtk-theme nautilus vim vi
+    yay -S --needed --noconfirm bluez bluez-utils brightnessctl htop man-db nano niri noto-fonts noto-fonts-cjk noto-fonts-emoji pipewire-audio pipewire-pulse playerctl ttf-dejavu ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-liberation ttf-nerd-fonts-symbols-mono xwayland-satellite wget adw-gtk-theme nautilus vim vi swayosd
+    sudo systemctl enable --now swayosd-libinput-backend.service
     gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark' && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
     cp -r ~/configurator/.config/niri ~/.config
 else
