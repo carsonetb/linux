@@ -130,13 +130,15 @@ fn build(app: &adw::Application) {
     let restart = gtk::Button::builder().label("󰜉").margin_end(12).build();
     let network = gtk::Button::builder().label("").margin_end(12).build();
     let bluetooth = gtk::Button::builder().label("󰂯").margin_end(12).build();
-    let volume = gtk::Button::builder().label("").build();
+    let volume = gtk::Button::builder().label("").margin_end(12).build();
+    let notifs = gtk::Button::builder().label("").build();
     power.set_can_focus(false);
     suspend.set_can_focus(false);
     restart.set_can_focus(false);
     network.set_can_focus(false);
     bluetooth.set_can_focus(false);
     volume.set_can_focus(false);
+    notifs.set_can_focus(false);
 
     buttons.append(&power);
     buttons.append(&suspend);
@@ -144,6 +146,7 @@ fn build(app: &adw::Application) {
     buttons.append(&network);
     buttons.append(&bluetooth);
     buttons.append(&volume);
+    buttons.append(&notifs);
 
     content.append(&clock);
     content.append(&battery_overlay);
@@ -207,6 +210,21 @@ fn build(app: &adw::Application) {
     let window_cloned = window.clone();
     restart.connect_clicked(move |_| {
         Command::new("reboot").spawn().unwrap();
+        window_cloned.close();
+    });
+
+    let window_cloned = window.clone();
+    volume.connect_clicked(move |_| {
+        Command::new("pwvucontrol").spawn().unwrap();
+        window_cloned.close();
+    });
+
+    let window_cloned = window.clone();
+    notifs.connect_clicked(move |_| {
+        let _ = Command::new("swaync-client")
+            .args(["-t", "-sw"])
+            .spawn()
+            .unwrap();
         window_cloned.close();
     });
 
