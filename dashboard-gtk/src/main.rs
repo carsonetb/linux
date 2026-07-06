@@ -36,41 +36,38 @@ fn build(app: &adw::Application) {
         cloned.set_label(&time_string);
         glib::ControlFlow::Continue
     });
+    content.append(&clock);
 
-    let battery = battery::Manager::new()
-        .unwrap()
-        .batteries()
-        .unwrap()
-        .next()
-        .unwrap()
-        .unwrap();
-    let percentage: f32 = (battery.state_of_charge() * 100.0).into();
-    let battery_label = gtk::Label::builder()
-        .label(format!(
-            "{} {percentage:.0}%",
-            if battery.state() == battery::State::Charging {
-                "Charge"
-            } else {
-                "Battery"
-            }
-        ))
-        .halign(gtk::Align::Center)
-        .valign(gtk::Align::Center)
-        .build();
-    let battery = gtk::ProgressBar::builder()
-        .css_classes(["battery-bar"])
-        .orientation(gtk::Orientation::Horizontal)
-        .fraction((percentage / 100.0) as f64)
-        .margin_top(12)
-        .margin_bottom(12)
-        .margin_start(12)
-        .margin_end(12)
-        .hexpand(true)
-        .build();
+    if let Some(Ok(battery)) = battery::Manager::new().unwrap().batteries().unwrap().next() {
+        let percentage: f32 = (battery.state_of_charge() * 100.0).into();
+        let battery_label = gtk::Label::builder()
+            .label(format!(
+                "{} {percentage:.0}%",
+                if battery.state() == battery::State::Charging {
+                    "Charge"
+                } else {
+                    "Battery"
+                }
+            ))
+            .halign(gtk::Align::Center)
+            .valign(gtk::Align::Center)
+            .build();
+        let battery = gtk::ProgressBar::builder()
+            .css_classes(["battery-bar"])
+            .orientation(gtk::Orientation::Horizontal)
+            .fraction((percentage / 100.0) as f64)
+            .margin_top(12)
+            .margin_bottom(12)
+            .margin_start(12)
+            .margin_end(12)
+            .hexpand(true)
+            .build();
 
-    let battery_overlay = gtk::Overlay::new();
-    battery_overlay.set_child(Some(&battery));
-    battery_overlay.add_overlay(&battery_label);
+        let battery_overlay = gtk::Overlay::new();
+        battery_overlay.set_child(Some(&battery));
+        battery_overlay.add_overlay(&battery_label);
+        content.append(&battery_overlay);
+    }
 
     let mut system = sysinfo::System::new_all();
     system.refresh_all();
@@ -148,8 +145,6 @@ fn build(app: &adw::Application) {
     buttons.append(&volume);
     buttons.append(&notifs);
 
-    content.append(&clock);
-    content.append(&battery_overlay);
     content.append(&memory_overlay);
     content.append(&storage_overlay);
     content.append(&buttons);

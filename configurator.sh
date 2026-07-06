@@ -60,7 +60,7 @@ fi
 
 if gum confirm "Install a notification daemon (swaync)?"; then
     yay -S --needed --noconfirm swaync
-    cp $SCRIPT_DIR/.config/swaync ~/.config
+    cp -r $SCRIPT_DIR/.config/swaync ~/.config
 fi
 
 if gum confirm "Install other cool gtk apps?"; then
